@@ -21,10 +21,9 @@ class PostAdmin(admin.ModelAdmin):
 
     class Media:
         js = (
-            'https://cloud.tinymce.com/stable/tinymce.min.js',
-            '/static/js/tinymce/custom.js',
+            #'https://cloud.tinymce.com/stable/tinymce.min.js',
+            '/static/js/tinymce/custoom.js',
         )
-
 
 class CommentAdmin(admin.ModelAdmin):
     """

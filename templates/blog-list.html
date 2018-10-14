@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load blog_tags %}
 
 {% block title %}
  博客日志列表
@@ -19,7 +20,6 @@
 
         <div class="col535 fl-left">
             {% for post in posts %}          
-            
                 <article class="entry-box">
                     <header class="entry-header">
                         <h2 class="post-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
@@ -39,48 +39,36 @@
                                 <a href="#" class="comments-link"><i class="comments-icon"></i>{{ post.comments.count }} </a>
                             </div> 
                             <div class="entry-text">
-                                <div><p>{{ post.body|truncatewords:20 }}</p>
+                                <div><p>{{ post.body|striptags|truncatewords:20|safe }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <footer><a class="entry-more btn" href="{{ post.get_absolute_url }}">阅读全文</a></footer>
-                </article> 
-
+                </article>
             {% endfor %}
 
-
-            <div id="pageination" class="clearfix">
-                <ul class="page-numbers">
-                    <li><span class="page-numbers current">1</span></li>
-                    <li><a class="page-numbers" href="#">2</a></li>
-                </ul>
-            </div>
+            {% comment %} 当前页面与分页代码片段，变量名称数量/名称一致 {% endcomment %}
+            {% include "pagination.html" %}   
+            
+            {% comment %} 当前页面与分页代码片段，变量名称数量/名称不一致 {% endcomment %} 
+            {% comment %} {% include "pagination.html" with objects = posts page = p %}  {% endcomment %}
+       
         </div>
 
         <div class="col230 fl-right">
             <aside id="sidebar">
                 <div class="widget">
-                    <h2>Categories</h2>
+                    <h2>博客分类</h2>
+                    {% get_all_categories as categories %}
                     <ul>
-                        <li><a href="#" title="View all posts filed under Audio">Audio</a></li>
-                        <li><a href="#" title="View all posts filed under Creative">Creative</a></li>
-                        <li><a href="#" title="View all posts filed under My Posts">My Posts</a></li>
-                        <li><a href="#" title="View all posts filed under Text Only">Text Only</a></li>
-                        <li><a href="#" title="View all posts filed under Video">Video</a></li>
+                        {% for item in categories %}
+                            <li><a href="{% url 'blog:blog_list' %}?cat={{item.slug}}" title="View all posts filed under Audio">{{ item.name}}</a></li>
+                        {% endfor %}        
                     </ul>
                 </div>
 
-                <div class="widget">
-                    <h2>Recent Posts</h2>
-                    <ul>
-                        <li><a href="#">Image Post Format</a></li>
-                        <li><a href="#">Text Post Format</a></li>
-                        <li><a href="#">Gallery Post</a></li>
-                        <li><a href="#">Audio Post Format</a></li>
-                        <li><a href="#">Video Post</a></li>
-                    </ul>
-                </div>
+                {% show_latest_posts 3 %}
 
                 <div class="widget">
                     <h2>Tags</h2>

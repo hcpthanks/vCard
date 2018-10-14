@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from tinymce.models import HTMLField
+from taggit.managers import TaggableManager
 
 
 # Create your models here.
@@ -38,9 +39,9 @@ class Post(models.Model):
     )
     title = models.CharField('标题', max_length=100)
     slug = models.SlugField('URL缩写', max_length=100, unique_for_date='publish')
-    category = models.ForeignKey('Category', related_name='blog_posts', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='blog_posts', on_delete=models.CASCADE)
     author = models.ForeignKey(User, related_name='blog_posts', on_delete=models.CASCADE)
-    image = models.ImageField('图片', null=True, blank=True, upload_to="uploads/") #加上属性null=True后，数据库需要重新迁移
+    image = models.ImageField('图片', null=True, blank=True, upload_to="uploads/")
     body  = HTMLField('正文') 
     publish = models.DateTimeField('发布时间', default=timezone.now)
     created = models.DateTimeField('创建时间', auto_now_add=True)
@@ -50,6 +51,8 @@ class Post(models.Model):
 
     objects =models.Manager()
     published = PostPublishedManager()
+
+    tags = TaggableManager()
 
 
 
